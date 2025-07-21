@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include "Program912a.c"
+void main() {
+	int a[20], n, key, flag;
+	printf("Enter value of n : ");
+	scanf("%d", &n);
+	read1(a, n);
+	bubbleSort(a, n);
+	printf("After sorting the elements are : ");
+	display(a, n);
+	printf("Enter key element : ");
+	scanf("%d", &key);
+	flag = binarySearch(a, 0, n - 1, key);
+	if (flag == -1) {
+		printf("The given key element %d is not found\n", key);
+	} else {
+		printf("The given key element %d is found at position : %d\n", key, flag);
+	}void read1(int a[], int n) {
+	printf("Enter %d elements : ",n);
+	for(int i=0;i<n;i++){
+		scanf("%d",&a[i]);
+	}
+}
+void bubbleSort(int a[],int n){
+	int temp;
+	for(int i=0;i<n;i++){
+		for (int j=i;j<n;j++){
+			if(a[j]<a[i]){
+				temp = a[i];
+				a[i]=a[j];
+				a[j]=temp;
+			}
+		}
+		
+	}
+}
+void display(int a[], int n){
+	for (int i=0;i<n;i++){
+		printf("%d ",a[i]);
+	}
+	printf("\n");
+}
+int binarySearch(int a[],int st,int end,int key){
+	if(st>end){
+		return-1;
+	}
+	if(a[st]==key){
+		return st;
+	}
+	else {
+		st++;
+		return binarySearch(a,st,end,key);
+	}
+}
+}
