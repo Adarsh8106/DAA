@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define INF 9999
+
+typedef struct{
+int u,v, cost;
+}Edge;
+
+int find(int parent[], int i) {
+	while(parent[i] != i)
+		i = parent[i];
+	return i;
+}
+
+void union1(int parent[], int rank[], int i, int j) {
+	int root1 = find(parent,i);
+	int root2 = find(parent,j);
+
+	if(rank[root1] < rank[root2])
+		parent[root1] = root2;
+	else if (rank[root1] > rank[root2])
+		parent[root2] = root1;
+	else{
+		parent[root2] = root1;
+		rank[root1]++;
+	}
+}
+
+int compare(const void *a, const void *b){
+	Edge *e1 = (Edge*)a;
+	Edge *e2 = (Edge*)b;
+	if(e1 -> cost != e2 -> cost)
+		return e1 -> cost - e2 -> cost;
+	if(e1 -> u != e2 -> u)
+		return e1 -> u - e2 -> u;
+
+	return e1 -> v - e2 -> v;
+}
+void kruskalMST(int **cost, int V) {
+	Edge edges[V*V];
+	int edgeCount = 0;
+
+	for(int i =  0; i < V; i++){
+		for(int j = i; j< V; j++)
+			{
+				if(cost[i][j] != INF)
+				{
+					edges[edgeCount].u = i;
+					edges[edgeCount].v = j;
+					edges[edgeCount].cost = cost[i][j];
+					edgeCount++;
+				}
+			}
+		}
+	
+
+qsort(edges, edgeCount, sizeof(Edge), compare);
+	
+	int *parent =  (int*)malloc(V*sizeof(int));
+	int *rank = (int*)calloc(V, sizeof(int));
+
+	for(int i = 0 ; i< V; i++){
+		parent[i]  =i;
+	}
+
+	int numEdges = 0, minCost = 0;
+
+	for(int i = 0; i< edgeCount && numEdges < V -1 ; i++)
+		{
+			int u = edges[i].u;
+			int v = edges[i].v;
+			int costEdge = edges[i].cost;
+
+			int set_u = find(parent, u);
+			int set_v  = find(parent, v);
+
+			if(set_u != set_v){
+				printf("Edge %d:(%d, %d) cost:%d\n",numEdges,u,v, costEdge);
+				union1(parent, rank, set_u, set_v);
+				minCost += costEdge;
+				numEdges ++;
+			}
+		}
+	printf("Minimum cost= %d\n",minCost);
+
+	free(parent);
+	free(rank);
+}
+
+
+
+int main() {
+    int V;
+    printf("No of vertices: ");
+    scanf("%d", &V);
+
+    int **cost = (int **)malloc(V * sizeof(int *));
+    for (int i = 0; i < V; i++)
+        cost[i] = (int *)malloc(V * sizeof(int));
+
+    printf("Adjacency matrix:\n");
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            scanf("%d", &cost[i][j]);
+
+    kruskalMST(cost, V);
+
+    for (int i = 0; i < V; i++)
+        free(cost[i]);
+    free(cost);
+
+    return 0;
+}
