@@ -1,0 +1,72 @@
+#include <stdio.h>
+
+#define INF 1000000000  // A large value representing infinity
+#define MAX 100         // Max number of vertices
+
+void floydWarshall(int dist[MAX][MAX], int n) {
+    int i, j, k;
+    for (k = 0; k < n; k++) {
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
+                if (dist[i][k] != INF && dist[k][j] != INF && 
+                    dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+}
+
+void printMatrix(int dist[MAX][MAX], int n) {
+    printf("The following matrix shows the shortest distances between all pairs of the vertices.\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (dist[i][j] == INF)
+                printf("%5s", "INF");
+            else
+                printf("%5d", dist[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int n, e;
+    int dist[MAX][MAX];
+
+    printf("Enter the number of vertices : ");
+    scanf("%d", &n);
+    printf("Enter the number of edges : ");
+    scanf("%d", &e);
+
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j)
+                dist[i][j] = 0;
+            else
+                dist[i][j] = INF;
+        }
+    }
+
+
+    for (int i = 0; i < e; i++) {
+        int u, v, w;
+        printf("Enter source : ");
+        scanf("%d", &u);
+        printf("Enter destination : ");
+        scanf("%d", &v);
+        printf("Enter weight : ");
+        scanf("%d", &w);
+        dist[u - 1][v - 1] = w;
+    }
+
+    
+    floydWarshall(dist, n);
+
+    
+    printMatrix(dist, n);
+
+    return 0;
+}
+
